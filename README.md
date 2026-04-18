@@ -66,5 +66,4 @@ The application will now be running at `http://127.0.0.1:8000/`.
 ## 🤝 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📝 License
-This project is open-source and available under the MIT License.
+
