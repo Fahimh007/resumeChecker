@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.job_title }} - ATS Resume Checker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <a href="/job-descriptions/" class="btn btn-outline-primary mb-3">
+                <i class="fas fa-arrow-left"></i> Back to Jobs
+            </a>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0"><i class="fas fa-briefcase"></i> {{ job.job_title }}</h3>
+                        </div>
+                        <div class="col-auto">
+                            <a href="/job-descriptions/{{ job.id }}/edit/" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="job-description-content">
+                        <h5 class="mb-3">Job Description</h5>
+                        <div class="bg-light p-4 rounded-lg" style="line-height: 1.8; white-space: pre-wrap; word-wrap: break-word;">
+                            {{ job.job_description }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light d-flex gap-2 justify-content-between">
+                    <div>
+                        <small class="text-muted">Job ID: {{ job.id }}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/analyze/?job={{ job.id }}" class="btn btn-sm btn-success">
+                            <i class="fas fa-search"></i> Analyze Resume Against This Job
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title mb-3"><i class="fas fa-chart-bar"></i> Job Description Stats</h6>
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <div>
+                                <p class="text-muted small">Description Length</p>
+                                <h5>{{ job.job_description|length|floatformat:0 }} characters</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div>
+                                <p class="text-muted small">Word Count</p>
+                                <h5>{{ job.job_description|wordcount }} words</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div>
+                                <p class="text-muted small">Created</p>
+                                <h5>Recently</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this job description?<br>
+                    <strong>{{ job.job_title }}</strong>
+                    <p class="text-muted small mt-2">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="/job-descriptions/{{ job.id }}/delete/" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

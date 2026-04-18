@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis History - ATS Resume Checker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-history"></i> Analysis History</h2>
+            <p class="text-muted">View and manage your past resume analyses</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/compare/" class="btn btn-primary">
+                <i class="fas fa-balance-scale"></i> Compare Analyses
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if analyses %}
+        <div class="row">
+            {% for analysis in analyses %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                <i class="fas fa-file-pdf"></i> {{ analysis.resume.filename }}
+                            </h6>
+                            <span class="badge badge-{% if analysis.rank >= 80 %}success{% elif analysis.rank >= 60 %}primary{% elif analysis.rank >= 40 %}warning{% else %}danger{% endif %}">
+                                {{ analysis.rank }}%
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <small class="text-muted">Job:</small>
+                                <strong>{{ analysis.job_description.job_title }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Experience:</small>
+                                {% if analysis.total_experience|stringformat:"s" == "no experience mention" %}
+                                    <span class="text-muted">No experience mentioned</span>
+                                {% else %}
+                                    <strong>{{ analysis.total_experience }}</strong>
+                                {% endif %}
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">Skills Found:</small>
+                                <strong>{{ analysis.skills|length }}</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">Analyzed:</small>
+                                <strong>{{ analysis.analyzed_at|date:"M d, Y H:i" }}</strong>
+                            </div>
+
+                            {% if analysis.resume_summary %}
+                            <div class="mb-3">
+                                <small class="text-muted">Summary:</small>
+                                <p class="small mb-0">{{ analysis.resume_summary|truncatewords:20 }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-light d-flex gap-2">
+                            <a href="/analyses/{{ analysis.id }}/" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <div class="form-check">
+                                <input class="form-check-input analysis-checkbox" type="checkbox" value="{{ analysis.id }}" id="check{{ analysis.id }}">
+                                <label class="form-check-label small" for="check{{ analysis.id }}">
+                                    Compare
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Compare Selected Button -->
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <button id="compareSelectedBtn" class="btn btn-success" disabled>
+                    <i class="fas fa-balance-scale"></i> Compare Selected Analyses
+                </button>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Analysis pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> No analyses found. <a href="/analyze/">Analyze your first resume</a>
+        </div>
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+    // Handle compare functionality
+    const checkboxes = document.querySelectorAll('.analysis-checkbox');
+    const compareBtn = document.getElementById('compareSelectedBtn');
+
+    function updateCompareButton() {
+        const checkedBoxes = document.querySelectorAll('.analysis-checkbox:checked');
+        compareBtn.disabled = checkedBoxes.length < 2;
+        compareBtn.textContent = `Compare Selected Analyses (${checkedBoxes.length})`;
+    }
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateCompareButton);
+    });
+
+    compareBtn.addEventListener('click', () => {
+        const checkedBoxes = document.querySelectorAll('.analysis-checkbox:checked');
+        const ids = Array.from(checkedBoxes).map(cb => cb.value);
+        if (ids.length >= 2) {
+            window.location.href = `/compare/?ids=${ids.join(',')}`;
+        }
+    });
+
+    updateCompareButton(); // Initial state
+</script>
+{% endblock %}
+{% endblock %}

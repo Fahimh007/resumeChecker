@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Home - ATS Resume Checker{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+    <div class="container">
+        <h1><i class="fas fa-robot"></i> Welcome to ATS Resume Checker</h1>
+        <p>Analyze your resume against job descriptions using AI-powered technology</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="/analyze/" class="btn btn-light btn-lg">
+                <i class="fas fa-upload"></i> Analyze Resume
+            </a>
+            <a href="/job-descriptions/" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-briefcase"></i> View Jobs
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mt-5">
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-brain fa-3x mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="card-title">AI-Powered Analysis</h5>
+                    <p class="card-text">Our advanced AI algorithms analyze your resume against job descriptions to provide detailed insights.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar fa-3x mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="card-title">Detailed Reports</h5>
+                    <p class="card-text">Get comprehensive reports with skill matching, experience depth, and relevance scores.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-bolt fa-3x mb-3" style="color: var(--primary-color);"></i>
+                    <h5 class="card-title">Instant Results</h5>
+                    <p class="card-text">Get instant analysis results in seconds to optimize your job search strategy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="row my-5">
+        <div class="col-12 mb-4">
+            <h2 class="text-center text-gradient mb-5">How It Works</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-light p-4 rounded-lg">
+                <div class="badge badge-primary mb-3" style="font-size: 1.5rem;">1</div>
+                <h5>Upload Resume</h5>
+                <p class="small text-muted">Upload your PDF resume to get started</p>
+            </div>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-light p-4 rounded-lg">
+                <div class="badge badge-primary mb-3" style="font-size: 1.5rem;">2</div>
+                <h5>Select Job</h5>
+                <p class="small text-muted">Choose a job description to compare against</p>
+            </div>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-light p-4 rounded-lg">
+                <div class="badge badge-primary mb-3" style="font-size: 1.5rem;">3</div>
+                <h5>AI Analysis</h5>
+                <p class="small text-muted">Our AI analyzes and matches your skills</p>
+            </div>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="bg-light p-4 rounded-lg">
+                <div class="badge badge-primary mb-3" style="font-size: 1.5rem;">4</div>
+                <h5>Get Results</h5>
+                <p class="small text-muted">Review detailed analysis and recommendations</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

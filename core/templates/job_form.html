@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}{% if job %}Edit Job Description{% else %}Add Job Description{% endif %} - ATS Resume Checker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <a href="/job-descriptions/" class="btn btn-outline-primary mb-3">
+                <i class="fas fa-arrow-left"></i> Back to Jobs
+            </a>
+
+            <div class="card">
+                <div class="card-header">
+                    {% if job %}
+                        <i class="fas fa-edit"></i> Edit Job Description
+                    {% else %}
+                        <i class="fas fa-plus"></i> Add New Job Description
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Job Title -->
+                        <div class="mb-4">
+                            <label for="jobTitle" class="form-label">Job Title</label>
+                            <input type="text" 
+                                   class="form-control {% if form.job_title.errors %}is-invalid{% endif %}" 
+                                   id="jobTitle" 
+                                   name="job_title"
+                                   value="{% if job %}{{ job.job_title }}{% endif %}"
+                                   placeholder="e.g., Senior Python Developer"
+                                   required>
+                            {% if form.job_title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.job_title.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Job Description -->
+                        <div class="mb-4">
+                            <label for="jobDescription" class="form-label">Job Description</label>
+                            <textarea class="form-control {% if form.job_description.errors %}is-invalid{% endif %}" 
+                                      id="jobDescription" 
+                                      name="job_description"
+                                      rows="10"
+                                      placeholder="Paste the complete job description here..."
+                                      required>{% if job %}{{ job.job_description }}{% endif %}</textarea>
+                            {% if form.job_description.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.job_description.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle"></i> Include all requirements, responsibilities, and qualifications
+                            </small>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                <i class="fas fa-save"></i> {% if job %}Update{% else %}Create{% endif %} Job Description
+                            </button>
+                            <a href="/job-descriptions/" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="fas fa-lightbulb"></i> Tips</h6>
+                    <ul class="mb-0 small">
+                        <li>Paste the complete job description for the best analysis</li>
+                        <li>Include all required skills and qualifications</li>
+                        <li>Be specific with technical requirements</li>
+                        <li>You can add as many job descriptions as you want</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Details - ATS Resume Checker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-chart-bar"></i> Analysis Details</h2>
+            <p class="text-muted">Detailed view of resume analysis</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/analyses/" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Back to History
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Main Analysis Card -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-pdf"></i> {{ analysis.resume.filename }}
+                    </h5>
+                    <span class="badge badge-{% if analysis.rank >= 80 %}success{% elif analysis.rank >= 60 %}primary{% elif analysis.rank >= 40 %}warning{% else %}danger{% endif %}">
+                        {{ analysis.rank }}% Match
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Job Position:</strong><br>
+                            {{ analysis.job_description.job_title }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Analyzed On:</strong><br>
+                            {{ analysis.analyzed_at|date:"F d, Y" }} at {{ analysis.analyzed_at|date:"H:i" }}
+                        </div>
+                    </div>
+
+                    {% if analysis.resume_summary %}
+                    <div class="mb-4">
+                        <h6><i class="fas fa-file-alt"></i> Resume Summary</h6>
+                        <div class="alert alert-info">
+                            {{ analysis.resume_summary }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Match Score -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-trophy"></i> Job Match Score</h6>
+                        <div class="progress mb-2" style="height: 2rem;">
+                            <div class="progress-bar bg-{% if analysis.rank >= 80 %}success{% elif analysis.rank >= 60 %}primary{% elif analysis.rank >= 40 %}warning{% else %}danger{% endif %}"
+                                 role="progressbar"
+                                 style="width: {{ analysis.rank }}%"
+                                 aria-valuenow="{{ analysis.rank }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                {{ analysis.rank }}%
+                            </div>
+                        </div>
+                        {% if analysis.rank >= 80 %}
+                            <p class="text-success mb-0"><i class="fas fa-check-circle"></i> Excellent match for this position!</p>
+                        {% elif analysis.rank >= 60 %}
+                            <p class="text-primary mb-0"><i class="fas fa-star-half-alt"></i> Good match with room for improvement.</p>
+                        {% elif analysis.rank >= 40 %}
+                            <p class="text-warning mb-0"><i class="fas fa-exclamation-triangle"></i> Fair match, consider strengthening relevant skills.</p>
+                        {% else %}
+                            <p class="text-danger mb-0"><i class="fas fa-times-circle"></i> Limited match, significant improvements needed.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-briefcase"></i> Experience</h6>
+                        {% if analysis.total_experience|stringformat:"s" == "no experience mention" %}
+                            <p class="text-muted">No work experience mentioned in the resume.</p>
+                        {% else %}
+                            <p class="mb-0"><strong>{{ analysis.total_experience }}</strong></p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-star"></i> Skills Identified ({{ analysis.skills|length }})</h6>
+                        {% if analysis.skills %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for skill in analysis.skills %}
+                                    <span class="badge badge-success">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">No skills identified</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Project Categories -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-folder"></i> Project Categories</h6>
+                        {% if analysis.project_categories %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for category in analysis.project_categories %}
+                                    <span class="badge bg-info text-dark">
+                                        {{ category }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">No project categories identified</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Raw Analysis Data (Collapsible) -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <button class="btn btn-link p-0 text-white text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#rawData">
+                            <i class="fas fa-code text-white"></i> Raw Analysis Data
+                        </button>
+                    </h6>
+                </div>
+                <div id="rawData" class="collapse">
+                    <div class="card-body">
+                        <pre class="bg-light p-3 rounded"><code>{{ analysis.raw_data|json_script:"rawData" }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Quick Stats -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-chart-pie"></i> Quick Stats</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="border rounded p-2">
+                                <div class="h4 mb-0">{{ analysis.rank }}%</div>
+                                <small class="text-muted">Match Score</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="border rounded p-2">
+                                <div class="h4 mb-0">{{ analysis.skills|length }}</div>
+                                <small class="text-muted">Skills</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="h4 mb-0">{{ analysis.project_categories|length }}</div>
+                                <small class="text-muted">Categories</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2">
+                                <div class="h4 mb-0">{{ analysis.analyzed_at|date:"d" }}</div>
+                                <small class="text-muted">Day</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-cogs"></i> Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/compare/?ids={{ analysis.id }}" class="btn btn-outline-primary">
+                            <i class="fas fa-balance-scale"></i> Compare with Others
+                        </a>
+                        <a href="/analyze/?job={{ analysis.job_description.id }}" class="btn btn-outline-success">
+                            <i class="fas fa-redo"></i> Analyze Another Resume
+                        </a>
+                        <button class="btn btn-outline-info" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Details -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-briefcase"></i> Job Details</h6>
+                </div>
+                <div class="card-body">
+                    <h6>{{ analysis.job_description.job_title }}</h6>
+                    <p class="small text-muted mb-3">{{ analysis.job_description.job_description|truncatewords:30 }}</p>
+                    <a href="/job-descriptions/{{ analysis.job_description.id }}/" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye"></i> View Full Job Description
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Format raw data for display
+    const rawData = {{ analysis.raw_data|safe }};
+    document.getElementById('rawData').querySelector('code').textContent = JSON.stringify(rawData, null, 2);
+</script>
+{% endblock %}
+{% endblock %}

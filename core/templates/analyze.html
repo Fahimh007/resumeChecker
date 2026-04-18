@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze Resume - ATS Resume Checker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-search"></i> Analyze Your Resume
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" id="analyzeForm">
+                        {% csrf_token %}
+                        
+                        <!-- Resume Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">Upload Your Resume (PDF)</label>
+                            <div class="upload-area" id="uploadArea">
+                                <input type="file" name="resume" id="resumeInput" accept=".pdf" required>
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p class="mt-3 mb-2"><strong>Drag and drop your PDF file here</strong></p>
+                                <p class="text-muted small">or click to browse from your computer</p>
+                                <p class="text-muted small mt-2">Max file size: 10MB</p>
+                            </div>
+                            <small class="text-muted d-block mt-2" id="fileName"></small>
+                        </div>
+
+                        <!-- Job Description Selection -->
+                        <div class="mb-4">
+                            <label for="jobDescription" class="form-label">Select Job Description</label>
+                            <select class="form-select form-select-lg" id="jobDescription" name="job_description" required>
+                                <option value="">-- Choose a Job Description --</option>
+                                {% for job in jobs %}
+                                    <option value="{{ job.id }}">{{ job.job_title }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Don't see your job? <a href="/job-descriptions/">Add a new job description</a></small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play"></i> Analyze Resume
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Resume Summary Section (shown after analysis) -->
+                    {% if resume_summary %}
+                    <div class="mt-4">
+                        <div class="alert alert-info" role="alert">
+                            <h6 class="alert-heading mb-2">
+                                <i class="fas fa-file-alt"></i> Resume Summary
+                            </h6>
+                            <p class="mb-0">{{ resume_summary }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Info Cards -->
+            <div class="row mt-5">
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <h6>Supported Format</h6>
+                            <p class="small text-muted mb-0">PDF files only</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-lightning-bolt fa-2x mb-2" style="color: var(--primary-color);"></i>
+                            <h6>Quick Processing</h6>
+                            <p class="small text-muted mb-0">Analysis takes 10-30 seconds</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Upload area drag and drop
+    const uploadArea = document.getElementById('uploadArea');
+    const resumeInput = document.getElementById('resumeInput');
+    const fileName = document.getElementById('fileName');
+
+    // uploadArea.addEventListener('click', () => resumeInput.click());
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.backgroundColor = 'rgba(102, 126, 234, 0.15)';
+        uploadArea.style.borderColor = 'var(--secondary-color)';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.backgroundColor = 'rgba(102, 126, 234, 0.05)';
+        uploadArea.style.borderColor = 'var(--primary-color)';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.backgroundColor = 'rgba(102, 126, 234, 0.05)';
+        uploadArea.style.borderColor = 'var(--primary-color)';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            resumeInput.files = files;
+            fileName.textContent = `Selected: ${files[0].name}`;
+        }
+    });
+
+    resumeInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            fileName.textContent = `Selected: ${e.target.files[0].name}`;
+        } else {
+            fileName.textContent = '';
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}
