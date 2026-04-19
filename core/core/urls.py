@@ -47,8 +47,10 @@ urlpatterns = [
     path('api/resume/', AnalyzeResumeAPI.as_view()),
 ]
 
-# Serve media files during development
+# Serve media files in all environments (needed for Vercel where DEBUG=False)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve static files only in development (whitenoise handles it in production)
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
  

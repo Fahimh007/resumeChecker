@@ -1,5 +1,4 @@
 import pdfplumber
-import spacy
 from groq import Groq
 import json
 import os

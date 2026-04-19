@@ -1,7 +1,6 @@
 django>=4.2,<5.0
 djangorestframework>=3.14
 pdfplumber>=0.10
-spacy>=3.7
 groq>=0.9
 python-dotenv>=1.0
 whitenoise>=6.6

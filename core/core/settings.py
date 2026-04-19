@@ -88,7 +88,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # On Vercel the filesystem is ephemeral; use /tmp so SQLite is writable.
+        # Locally (DEBUG=True) keep the db next to manage.py.
+        'NAME': BASE_DIR / 'db.sqlite3' if DEBUG else Path('/tmp/db.sqlite3'),
     }
 }
 
@@ -141,4 +143,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media files (uploaded files)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Use /tmp on Vercel (writable), local media/ dir in development
+MEDIA_ROOT = BASE_DIR / 'media' if DEBUG else Path('/tmp/media')
