@@ -65,7 +65,5 @@ The application will now be running at `http://127.0.0.1:8000/`.
 4. Review the generated detailed report to see the match score and extracted data.
 5. Use the "History" and "Compare" tabs to view past analyses side-by-side.
 
-## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 
